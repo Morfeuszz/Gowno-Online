@@ -1,5 +1,3 @@
-
-
 import asyncio
 import json
 import logging
@@ -8,12 +6,12 @@ import datetime
 import mysql.connector
 import Functions
 import time
+import cProfile
+
+with open('config.json', 'r') as f:
+    config = json.load(f)
 
 logging.basicConfig()
-
-
-
-
 
 USERS = set()                               #all conntected users
 
@@ -44,7 +42,7 @@ async def notifyDisconnection(websocket):
 
 async def updatePosition(websocket,message,data):
     if len(USERS) > 0:
-        idList = Functions.map_grid.usersInGrid(data["gridX"],data["gridZ"])
+        idList = Functions.map_grid.usersInGrid(int(data["grid"]["x"]),int(data["grid"]["y"]))
         usersList = set()
         for x in idList:
             usersList.add(IDwebsocket[str(x)])
@@ -81,18 +79,20 @@ def removeID(websocket):
 
 
 async def counter(websocket, path):
-    
+    print("conntectd")
     await requestID(websocket)
     try:
         async for message in websocket:
             data = json.loads(message)
-            #print(message)
+            print(message)
             if data["action"] == "playerInfo":
                 await updatePosition(websocket,message,data)
             if data["action"] == "giveID":
                 takenID.append(data["ID"])
                 print(takenID)
                 Functions.idSocketConv.addNewID(websocket,str(data["ID"]))
+                if(data["ID"] in Functions.map_grid.disconnectedID):
+                    Functions.map_grid.disconnectedID.remove(data["ID"])
                 await register(websocket)
             if data["action"] == "chatMessage":
                 await sendChatMessage(websocket,message)
@@ -100,16 +100,26 @@ async def counter(websocket, path):
                 await websocket.send('{"action" : "pong"}')
             if data["action"] == "mapGrid":
                 if data["add"] == True:
-                    Functions.map_grid.addToGrid(data["x"],data["z"],data["ID"])
+                    Functions.map_grid.addToGrid(int(data["cords"]["x"]),int(data["cords"]["y"]),data["ID"])
                 else:
-                    Functions.map_grid.changeToGrid(data["x"],data["z"],data["xOld"],data["zOld"],data["ID"])
+                    Functions.map_grid.changeToGrid(int(data["cords"]["x"]),int(data["cords"]["y"]),int(data["cordsOld"]["x"]),int(data["cordsOld"]["y"]),data["ID"])
+            if data["action"] == "debug":
+                result = getattr(Functions.debug, data["command"])(data)
             else:
                 pass      
     finally:
-        await unregister(websocket)
+        if(websocket in USERS):
+            await unregister(websocket)
         print("disconnected")
 
-start_server = websockets.serve(counter, "localhost", 6789)
+ip = config["ip"]
+port = config["port"]
+print("Server starting on " + ip + ":" + str(port))
 
-asyncio.get_event_loop().run_until_complete(start_server)
+start_server = websockets.serve(counter, ip, port)
+
+asyncio.get_event_loop().run_until_complete(
+     asyncio.gather(start_server,
+                   Functions.clock.clock())
+    )
 asyncio.get_event_loop().run_forever()

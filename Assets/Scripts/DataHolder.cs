@@ -11,6 +11,7 @@ public class DataHolder : MonoBehaviour
         public int EXP;
         public float posX;
         public float posY;
+        public string serverAdress;
     }
 
 
@@ -22,6 +23,7 @@ DontDestroyOnLoad(this.gameObject);
     // Update is called once per frame
     public  void Login(string message)
     {
+        print(message);
         data = JsonUtility.FromJson<UserData>(message);
     }
 }

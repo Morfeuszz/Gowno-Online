@@ -7,9 +7,9 @@ disconnectedID = set()
 
 
 def addToGrid(x,y,ID):
-    print("added")
     temp = grid[x][y]
     temp.append(ID)
+    print(temp)
 
 def changeToGrid(x,y,oldX,oldY,ID):
     temp = grid[oldX][oldY]

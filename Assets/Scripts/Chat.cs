@@ -25,7 +25,7 @@ public class Chat : MonoBehaviour
     List<Message> messageList = new List<Message>();
     public static ChatMessage message = new ChatMessage();
     public Connection connection;
-    public PlayerControler playerController;
+    public thirdPersonController playerController;
     public InputField chatInput;
     bool inputMode;
 
@@ -45,6 +45,7 @@ public class Chat : MonoBehaviour
         if(chatInput.text.Replace(" ","") != ""){
         message.Username = connection.DataController.data.Username;
         message.message = chatInput.text;
+        chatInput.text = "";
         displayChatMessage();
         connection.SendWebSocketMessage(JsonUtility.ToJson(message));
         }
@@ -58,8 +59,6 @@ public class Chat : MonoBehaviour
     void displayChatMessage(){
         Message newMessage = new Message();
         newMessage.text = message.Username + ": " + message.message;
-        //newMessage.text = "Morfina" + ": " + chatInput.text;
-        chatInput.text = "";
         GameObject newText = Instantiate(textObject, chatPanel.transform);
         newMessage.textObject = newText.GetComponent<Text>();
         newMessage.textObject.text = newMessage.text;

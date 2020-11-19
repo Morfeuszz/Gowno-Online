@@ -5,6 +5,7 @@ using UnityEngine;
 public class mapGrid : MonoBehaviour
 {
     public GameObject Player;
+    public thirdPersonController playerController;
     public Connection connection;
     public DataHolder DataController;
     //public int mapSize = 1000;
@@ -13,10 +14,8 @@ public class mapGrid : MonoBehaviour
     public class MapGrid {
     public string action = "mapGrid";
     public bool add = true;
-    public int x;
-    public int z;
-    public int xOld;
-    public int zOld;
+    public Vector2 cords;
+    public Vector2 cordsOld;
     public int ID;
     }
 
@@ -31,12 +30,11 @@ public class mapGrid : MonoBehaviour
         DataController = GameObject.Find ("DATA").GetComponent<DataHolder>();
         grid.ID = DataController.data.ID;
         grid.add = true;
-        grid.x = (int)Player.transform.position.x / gridSize;
-        grid.z = (int)Player.transform.position.z / gridSize;
+        grid.cords = new Vector2((int)Player.transform.position.x / gridSize,(int)Player.transform.position.z / gridSize);
         string temp = JsonUtility.ToJson(grid);
         connection.SendWebSocketMessage(temp);
-        grid.xOld = grid.x;
-        grid.zOld = grid.z;
+        grid.cordsOld = grid.cords;
+        thirdPersonController.json.grid = grid.cords;
         grid.add = false;
     }
 
@@ -45,13 +43,11 @@ public class mapGrid : MonoBehaviour
         if(grid.add == true){
             return;
         }
-        grid.x = (int)Player.transform.position.x / gridSize;
-        grid.z = (int)Player.transform.position.z / gridSize;
-        if(grid.x != grid.xOld || grid.z != grid.zOld){
+        grid.cords = new Vector2((int)Player.transform.position.x / gridSize,(int)Player.transform.position.z / gridSize);
+        if(grid.cords != grid.cordsOld){
             string temp = JsonUtility.ToJson(grid);
             connection.SendWebSocketMessage(temp);
-            grid.xOld = grid.x;
-            grid.zOld = grid.z;
+            grid.cordsOld = grid.cords;;
         }
 
     }

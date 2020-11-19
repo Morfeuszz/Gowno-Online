@@ -10,10 +10,6 @@ public class Connection : MonoBehaviour
 {
     System.Globalization.CultureInfo culture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
     WebSocket websocket;
-    public string myID;
-    public string PlayerID;
-    public GameObject player;
-    public GameObject playerPrefab;
     public DataHolder DataController;
     public PlayersManager playersManager;
     public Chat chat;
@@ -31,7 +27,9 @@ public class Connection : MonoBehaviour
 
     async void Start()
     {
-        websocket = new WebSocket("ws://127.0.0.1:6789");
+        DataController = GameObject.Find ("DATA").GetComponent<DataHolder>();
+        websocket = new WebSocket(DataController.data.serverAdress);
+        
   
         websocket.OnOpen += () =>
         {
@@ -47,11 +45,7 @@ public class Connection : MonoBehaviour
         {
             Debug.Log("Connection closed!");
         };
-         DataController = GameObject.Find ("DATA").GetComponent<DataHolder>();
-         
 
-        thirdPersonController.json.ID = DataController.data.ID;
-        thirdPersonController.json.Username = DataController.data.Username;
         websocket.OnMessage += (bytes) =>
         {
             var message = System.Text.Encoding.UTF8.GetString(bytes);

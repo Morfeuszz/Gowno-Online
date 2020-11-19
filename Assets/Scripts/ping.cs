@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ping : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class ping : MonoBehaviour
     public bool isPinging;
     public string pingNow;
     public Connection connection;
+    public Text pingText;
 
     void Start(){
         InvokeRepeating("Ping", 1f, 5f); 
@@ -15,7 +17,7 @@ public class ping : MonoBehaviour
     void FixedUpdate()
     {
         if(isPinging == true){
-            timer += Time.deltaTime;
+            timer += Time.fixedDeltaTime;
         }
     }
 
@@ -32,13 +34,8 @@ public class ping : MonoBehaviour
         Debug.Log(timer);
         isPinging = false;
         pingNow = "ping: " + timer*1000;
+        pingText.text = pingNow;
     }
 
-
-
-        void OnGUI()
-    {
-        GUI.Label(new Rect(10, 10, 100, 20), pingNow);
-    }
     
 }
