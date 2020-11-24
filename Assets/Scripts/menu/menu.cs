@@ -22,7 +22,7 @@ public class menu : MonoBehaviour
 
      public void Login () {
  
-         string url = "http://18.192.38.56/login.php";
+         string url = "http://18.192.38.56/php/login.php";
  
          WWWForm form = new WWWForm();
          form.AddField("username", usernameLogin.text);
@@ -33,7 +33,7 @@ public class menu : MonoBehaviour
 
      public void Register () {
  
-         string url = "http://18.192.38.56/register.php";
+         string url = "http://18.192.38.56/php/register.php";
  
          WWWForm form = new WWWForm();
          form.AddField("username", usernameRegister.text);

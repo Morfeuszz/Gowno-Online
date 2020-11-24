@@ -20,10 +20,12 @@ DontDestroyOnLoad(this.gameObject);
 }
 
     public UserData data = new UserData();
-    // Update is called once per frame
+    
     public  void Login(string message)
     {
         print(message);
         data = JsonUtility.FromJson<UserData>(message);
     }
+
+
 }
