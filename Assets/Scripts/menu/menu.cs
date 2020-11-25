@@ -16,10 +16,20 @@ public class menu : MonoBehaviour
     public InputField confirmPassword;
     public TextFadeOut fadeOutScript;
     public DataHolder DataController;
-
+    public GameObject dataPrefab ,empty;
     public GameObject LoginScreen;
     public GameObject ServerScreen;
+    
 
+
+    void Awake(){
+        if (GameObject.Find("DATA") == null){
+            GameObject Data = Instantiate(dataPrefab);
+            Data.name = "DATA";
+        }
+        DataController = GameObject.Find ("DATA").GetComponent<DataHolder>();
+
+    }
      public void Login () {
  
          string url = "http://18.192.38.56/php/login.php";
@@ -53,39 +63,35 @@ public class menu : MonoBehaviour
              switch (www.text.Substring(0,1))
             {
                 case "0":
-                DataController.Login(www.text.Substring(2,www.text.Length-5));
-                LoginScreen.SetActive(false);
-                ServerScreen.SetActive(true);
+                    DataController.Login(www.text.Substring(2,www.text.Length-5));
+                    DataController.menu.activeScreen = 1;
                     break;
                 case "9":
-                DataController.Login(www.text.Substring(2,www.text.Length-3));
-                LoginScreen.SetActive(false);
-                ServerScreen.SetActive(true);
+                    DataController.Login(www.text.Substring(2,www.text.Length-3));
+                    DataController.menu.activeScreen = 1;
                     break;  
                 case "1":
-                fadeOutScript.FadeOut("Please enter username.");
+                    fadeOutScript.FadeOut("Please enter username.");
                     break;
                 case "2":
-                fadeOutScript.FadeOut("Please enter password.");
+                    fadeOutScript.FadeOut("Please enter password.");
                     break;
                 case "3":
-                fadeOutScript.FadeOut("Wrong username or password.");
+                    fadeOutScript.FadeOut("Wrong username or password.");
                     break;
                 case "4":
-                fadeOutScript.FadeOut("This username is already taken.");
+                    fadeOutScript.FadeOut("This username is already taken.");
                     break;
                 case "5":
-                fadeOutScript.FadeOut("Password must have atleast 6 characters.");
+                    fadeOutScript.FadeOut("Password must have atleast 6 characters.");
                     break;
                 case "6":
-                fadeOutScript.FadeOut("Please confirm password.");
+                    fadeOutScript.FadeOut("Please confirm password.");
                     break;
                 case "7":
-                fadeOutScript.FadeOut("Password did not match.");
+                    fadeOutScript.FadeOut("Password did not match.");
                     break;
-                
-                default: 
-                
+                default:
                     break;
             }
          } else {

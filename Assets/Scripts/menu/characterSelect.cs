@@ -30,10 +30,12 @@ public class characterSelect : MonoBehaviour
     }
     public  SQLResult charactersDB;
     public GameObject widgetObject, statusPanel, newCharacterButton; 
-    public DataHolder DataController;
+    private DataHolder DataController;
+    private mouseLock MouseLock;
 
     void Start(){
         DataController = GameObject.Find ("DATA").GetComponent<DataHolder>();
+        MouseLock = GameObject.Find ("DATA").GetComponent<mouseLock>();
         GetCharacters();
     }
 
@@ -70,6 +72,7 @@ public class characterSelect : MonoBehaviour
             newWidget.Name = GameObject.Find(character.Name +"Character/Name").GetComponent<Text>();
             newWidget.Level = GameObject.Find(character.Name +"Character/Level").GetComponent<Text>();
             newWidget.button = GameObject.Find(character.Name +"Character/Button").GetComponent<Button>();
+            newWidget.button.onClick.AddListener(delegate {connect(character); });
             newWidget.Name.text = character.Name;
             newWidget.Level.text = "Level: " + character.Level;
         }
@@ -82,6 +85,17 @@ public class characterSelect : MonoBehaviour
         SceneManager.LoadScene("CharacterCreator");
     }
 
+    public void connect(CharacterInfo character){
+        DataController.data.characterName = character.Name;
+        DataController.data.characterID = character.ID;
+        DataController.data.Level  = character.Level;
+        DataController.data.EXP = character.Exp;
+        string[] tempPostion = character.Position.Split(',');
+        DataController.data.position = new Vector3(float.Parse(tempPostion[0]),float.Parse(tempPostion[1]),float.Parse(tempPostion[2]));
+        SceneManager.LoadScene(1);
+        MouseLock.canChange = true;
+        MouseLock.ChangeLock();
+    }
 
     string fixJson(string value)
     {

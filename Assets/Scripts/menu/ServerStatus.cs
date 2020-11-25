@@ -31,13 +31,12 @@ public class ServerStatus : MonoBehaviour
     public List<WebSocket> websocketList = new List<WebSocket>();
     public GameObject widgetObject, statusPanel; 
     private DataHolder DataController;
-    private mouseLock MouseLock;
+   
 
     string url = "http://18.192.38.56/servers.json";
     void Awake()
     {   
         DataController = GameObject.Find ("DATA").GetComponent<DataHolder>();
-        MouseLock = GameObject.Find ("DATA").GetComponent<mouseLock>();
         WWW www = new WWW(url);
         StartCoroutine(GetServerStatus(www));
     }
@@ -92,9 +91,7 @@ public class ServerStatus : MonoBehaviour
 
     public void Connect(string serverAdress){
         DataController.data.serverAdress = serverAdress;
-        MouseLock.canChange = true;
-        MouseLock.ChangeLock();
-        SceneManager.LoadScene(1);
+        DataController.menu.activeScreen = 2;
     }
 
 }
