@@ -1,3 +1,3 @@
-# Gowno-Online
+# Morfina Online
 
-MMO or somethink, dunno
+My pseudo MMO game im working on, made in unity server-side in python. More info in future
