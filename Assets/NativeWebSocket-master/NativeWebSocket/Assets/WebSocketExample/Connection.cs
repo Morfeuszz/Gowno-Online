@@ -10,11 +10,14 @@ public class Connection : MonoBehaviour
 {
     System.Globalization.CultureInfo culture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
     WebSocket websocket;
-    public DataHolder DataController;
+    
     public PlayersManager playersManager;
     public Chat chat;
     public ping pingScript;
+    public DataHolder DataController;
+    private bool connected = false;
 
+    public bool DebugModeNoConnection = false;
 
     public class Action
     {
@@ -27,6 +30,7 @@ public class Connection : MonoBehaviour
 
     async void Start()
     {
+        if(DebugModeNoConnection) this.enabled = false;
         DataController = GameObject.Find ("DATA").GetComponent<DataHolder>();
         websocket = new WebSocket(DataController.data.serverAdress);
         
@@ -49,24 +53,20 @@ public class Connection : MonoBehaviour
         websocket.OnMessage += (bytes) =>
         {
             var message = System.Text.Encoding.UTF8.GetString(bytes);
-            actionName = JsonUtility.FromJson<Action>(message);
             print(message);
+            actionName = JsonUtility.FromJson<Action>(message);
+
 
             switch (actionName.action)
             {
-                case "newPlayer":
-                    playersManager.newPlayer(actionName.ID);
+                case "updatePositions":
+                    playersManager.updatePositions(message);
                     break;
-                case "disconnect":
-                    playersManager.disconnect(actionName.ID);
+                case "requestToken":
+                    SendAuthToken("{\"authToken\" : \"" + DataController.data.authToken + "\", \"ID\" : \"" + DataController.data.ID + "\"}");
                     break;
-                case "playerInfo":
-                    playersManager.playerInfo(message);
-                    break;
-                case "requestID":
-                    actionName.ID = DataController.data.ID;
-                    actionName.action = "giveID";
-                    SendWebSocketMessage(JsonUtility.ToJson(actionName));
+                case "tokenSuccess":
+                    connected = true;
                     break;
                 case "chatMessage":
                     chat.reciveChatMessage(message);
@@ -79,7 +79,6 @@ public class Connection : MonoBehaviour
             }
 
         };
-
 
         await websocket.Connect();
 
@@ -94,11 +93,15 @@ public class Connection : MonoBehaviour
 
     async public void SendWebSocketMessage(string json)
     {
-        if (websocket.State == WebSocketState.Open)
+        if (websocket.State == WebSocketState.Open && connected == true)
         {
-            
             await websocket.SendText(json);
         }
+    }
+
+    async public void SendAuthToken(string token)
+    {
+        await websocket.SendText(token);
     }
 
     private async void OnApplicationQuit()

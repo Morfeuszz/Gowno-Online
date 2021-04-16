@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
 
 public class characterSelect : MonoBehaviour
 {
@@ -29,19 +30,26 @@ public class characterSelect : MonoBehaviour
     public CharacterInfo[] result;
     }
     public  SQLResult charactersDB;
-    public GameObject widgetObject, statusPanel, newCharacterButton; 
+    public GameObject widgetObject, statusPanel, newCharacterButton, serverSelect, blackScreen; 
+    private CanvasFadeOut characterSelectCanvas, serverSelectCanvas, blackScreenCanvas;
     private DataHolder DataController;
+    public authClient auth;
     private mouseLock MouseLock;
 
     void Start(){
         DataController = GameObject.Find ("DATA").GetComponent<DataHolder>();
         MouseLock = GameObject.Find ("DATA").GetComponent<mouseLock>();
-        GetCharacters();
+        characterSelectCanvas = GetComponent<CanvasFadeOut>();
+        serverSelectCanvas = serverSelect.GetComponent<CanvasFadeOut>();
     }
 
     public void GetCharacters () {
-
-        string url = "http://18.192.38.56/php/getCharacters.php";
+        Array.Clear(charactersDB.result, 0 ,charactersDB.result.Length);
+        foreach (Transform child in statusPanel.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        string url = "http://35.158.140.147/php/getCharacters.php";
         //string url = "http://127.0.0.1/getCharacters.php";
 
         WWWForm form = new WWWForm();
@@ -82,6 +90,7 @@ public class characterSelect : MonoBehaviour
     }
 
     public void loadCreator(){
+        DataController.menu.characterCreator = true;
         SceneManager.LoadScene("CharacterCreator");
     }
 
@@ -92,9 +101,11 @@ public class characterSelect : MonoBehaviour
         DataController.data.EXP = character.Exp;
         string[] tempPostion = character.Position.Split(',');
         DataController.data.position = new Vector3(float.Parse(tempPostion[0]),float.Parse(tempPostion[1]),float.Parse(tempPostion[2]));
-        SceneManager.LoadScene(1);
+        auth.SendWebSocketMessage("{\"action\" : \"loadCharacterData\", \"ID\" : \"" + DataController.data.ID + "\", \"charID\" : \"" + character.ID + "\"}");
         MouseLock.canChange = true;
-        MouseLock.ChangeLock();
+        //MouseLock.ChangeLock();
+        StartCoroutine(LoadScene());
+
     }
 
     string fixJson(string value)
@@ -103,5 +114,23 @@ public class characterSelect : MonoBehaviour
         return value;
     }
 
+    public void backButton(){
+        serverSelectCanvas.FadeIn();
+        characterSelectCanvas.FadeOut();
+    }
 
+
+    IEnumerator LoadScene ()
+    {
+        AsyncOperation op = SceneManager.LoadSceneAsync("testchamber");
+
+        while ( !op.isDone )
+        {
+            float progress = Mathf.Clamp01(op.progress / .9f);
+            Debug.Log(op.progress);
+
+            yield return null;
+        }
+    }
+    
 }

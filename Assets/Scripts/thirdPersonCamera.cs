@@ -31,6 +31,8 @@
      private float currentDistance;
      private float desiredDistance;
      private float correctedDistance;
+
+     public bool rotationLocked = false;
  
      void Start ()
      {
@@ -60,7 +62,7 @@
  
          // If either mouse buttons are down, let the mouse govern camera position
          if (GUIUtility.hotControl == 0) {
-             if (!Input.GetMouseButton(0) || !Input.GetMouseButton(1))
+             if (!rotationLocked)
              {
                  xDeg += Input.GetAxis ("Mouse X") * xSpeed * 0.02f;
                  yDeg -= Input.GetAxis ("Mouse Y") * ySpeed * 0.02f;
@@ -82,9 +84,10 @@
  
          yDeg = ClampAngle(yDeg, yMinLimit, yMaxLimit);
  
-         // set camera rotation
+         // set camera rotation 
          Quaternion rotation = Quaternion.Euler(yDeg, xDeg, 0);
          correctedDistance = desiredDistance;
+
  
          // calculate desired camera position
          vTargetOffset = new Vector3 (0, -targetHeight, 0);

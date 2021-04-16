@@ -12,14 +12,9 @@ public class PlayerInfoHolder : MonoBehaviour
 
 
     
-    public void UpdateInfo(thirdPersonController.PlayerInfo playerData){
+    public void UpdateInfo(thirdPersonController.PositionInfo playerData){
         rb.velocity = playerData.velocity;
         transform.position = playerData.position;
         transform.rotation = Quaternion.Euler(0,playerData.rotation,0);
-        anim.SetFloat("Horizontal",playerData.animHorizontal);
-        anim.SetFloat("Vertical",playerData.animVertical);
-        anim.SetFloat("Magnitude",playerData.animMagnitude);
-        anim.SetBool("Running",playerData.Running);
-        anim.SetBool("Jumping",playerData.Jumping);
     }
 }

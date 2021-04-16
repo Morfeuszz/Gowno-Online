@@ -18,7 +18,7 @@ public class PlayerControler : MonoBehaviour
         public int ID;
     }
     private Animator anim;
-     public static PlayerInfo json = new PlayerInfo();
+    public static PlayerInfo json = new PlayerInfo();
     float oldX;
     float oldY;
     float oldMagni;

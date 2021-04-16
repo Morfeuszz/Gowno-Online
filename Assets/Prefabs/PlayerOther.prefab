@@ -900,6 +900,7 @@ GameObject:
   - component: {fileID: 1333932061720379698}
   - component: {fileID: 1083917052244503194}
   - component: {fileID: 1333932061720379699}
+  - component: {fileID: 4266467751897457197}
   m_Layer: 8
   m_Name: Model
   m_TagString: Untagged
@@ -955,6 +956,22 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &4266467751897457197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1333932061720379697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1772199e5b5f864c8f5072024f84fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 1333932061720379699}
+  rb: {fileID: 1333932062356706460}
+  player: {fileID: 1333932062356706435}
+  nrmlspeed: 2
 --- !u!1 &1333932062356706435
 GameObject:
   m_ObjectHideFlags: 0
@@ -1022,7 +1039,9 @@ MonoBehaviour:
   Holster: {fileID: 365011446}
   Weapon: {fileID: 926668635}
   anim: {fileID: 1333932061720379699}
+  Sheathed: 1
   attack: 0
+  Status: 
 --- !u!114 &3320640179543261362
 MonoBehaviour:
   m_ObjectHideFlags: 0

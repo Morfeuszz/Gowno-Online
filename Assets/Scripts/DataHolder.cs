@@ -14,10 +14,19 @@ public class DataHolder : MonoBehaviour
         public int EXP;
         public Vector3 position;
         public string serverAdress;
+        public string authToken;
+        public string familyName;
+        public InventoryData inventory;
     }
 
+    [System.Serializable]
+    public class InventoryData {
+        public int slots;
+    }
     public class MenuData {
         public int activeScreen = 0;
+        public bool characterCreator = false;
+        public bool logged = false;
     }
 
     public MenuData menu = new MenuData();

@@ -17,26 +17,40 @@ public class PlayersManager : MonoBehaviour
     static GameObject PlayerPrefab;
     static GameObject playerFinder;
     public GameObject spawn;
-    static Animator anim;
-    static TMP_Text UsernameText;
-    private weaponManager weapons;
-    private string currentAnim;
-    private int oldAttackID = 0;
+    private Rigidbody rb;
 
-  
+    [System.Serializable]
+    public class positionData {
+        public Vector3 position;
+        public Vector3 velocity;
+        public float rotation;
+        public int ID;
+    }
+    [System.Serializable]
+    public class positionsString {
+        public string[] positions;
+
+    }
+    public positionsString positionsStringList;
+    public positionData positionsReady;
+
+    public DataHolder DataController;
+
+    public List<int> spawnedIDs = new List<int>();
     
-    static thirdPersonController.PlayerInfo playerData = new thirdPersonController.PlayerInfo();
+
 
 
 
     private void Start() {
         PlayerPrefab = playerPrefab;
         //Instantiate(localPlayerPrefab, spawn.transform.position, Quaternion.identity);
+        DataController = GameObject.Find ("DATA").GetComponent<DataHolder>();
     }
-    public void newPlayer(int ID){
+    public void spawnPlayer(int ID){
         Track = Instantiate(PlayerPrefab, spawn.transform.position, Quaternion.identity);
         Track.name = "Player" + ID;
-
+        spawnedIDs.Add(ID);
     }
 
     public void disconnect(int ID){
@@ -44,32 +58,33 @@ public class PlayersManager : MonoBehaviour
         Destroy(playerFinder);
     }
 
-    public void playerInfo(string message){
-        playerData = JsonUtility.FromJson<thirdPersonController.PlayerInfo>(message);
+    /*public void playerInfo(string message){
+        playerData = JsonUtility.FromJson<thirdPersonController.PositionInfo>(message);
         playerFinder = GameObject.Find("Player" + playerData.ID);
         anim = GameObject.Find("Player" + playerData.ID+"/Model").GetComponent<Animator>();
         PlayerInfoHolder PIH = playerFinder.GetComponent<PlayerInfoHolder>();
         PIH.UpdateInfo(playerData);
 
-
-        UsernameText = GameObject.Find("Player" + playerData.ID + "/Name").GetComponent<TMP_Text>();
-        UsernameText.text = playerData.Username;
-        weapons = playerFinder.GetComponent<weaponManager>();
-        weapons.attack = playerData.attack;
-        weapons.Sheath(playerData.Armed);
-        if(playerData.attackID != oldAttackID){
-            anim.Play("Slash", 2, 0f);
-            oldAttackID = playerData.attackID;
-        }
-
-        
-        
-
-        /*
-        if(playerData.isDashing == true){
-            playerFinder.GetComponent<dash>().doDash();
-        }
+    }
     */
-        
+    public void updatePositions(string message){
+        positionsStringList = JsonUtility.FromJson<positionsString>(message);
+        foreach (string pos in positionsStringList.positions)
+        {
+            positionsReady = JsonUtility.FromJson<positionData>(pos);
+            if(positionsReady.ID != DataController.data.ID){
+                if(!spawnedIDs.Contains(positionsReady.ID)){
+                    spawnPlayer(positionsReady.ID);
+                }
+                playerFinder = GameObject.Find("Player" + positionsReady.ID);
+                playerFinder.transform.position = positionsReady.position;
+                playerFinder.transform.rotation = Quaternion.Euler(0,positionsReady.rotation,0);
+                rb = playerFinder.GetComponent<Rigidbody>();
+                rb.velocity = positionsReady.velocity;
+            }
+        }
+
+
+
     } 
 }

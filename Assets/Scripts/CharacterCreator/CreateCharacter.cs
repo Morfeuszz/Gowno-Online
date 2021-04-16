@@ -28,7 +28,7 @@ public class CreateCharacter : MonoBehaviour
             switch (www.text.Substring(0,1))
             {
                 case "0":
-                    SceneManager.LoadScene("menu");
+                    SceneManager.LoadScene("menuNew");
                     break; 
                 case "1":
                 fadeOutScript.FadeOut("Please enter name.");

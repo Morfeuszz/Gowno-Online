@@ -6,16 +6,16 @@ using UnityEngine.SceneManagement;
 
 public class mouseLock : MonoBehaviour
 {   
-
+    public bool locked;
     private bool mouseLockMode;
     public bool canChange;
-    private thirdPersonCamera mainCamera;
-    private thirdPersonController playerController;
+    public thirdPersonCamera mainCamera;
+    public thirdPersonController playerController;
     
     
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Confined;
+        //Cursor.lockState = CursorLockMode.Confined;
         mouseLockMode = true;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
@@ -31,10 +31,21 @@ public class mouseLock : MonoBehaviour
     }
 
     void Update()
-    {
+    {   
         if(Input.GetKeyDown("left ctrl") && canChange){
-            ChangeLock();
+            locked = !locked;
         }
+
+        if(locked != mouseLockMode){
+            mouseLockMode = locked;
+            mainCamera.rotationLocked = locked;
+            if(locked){
+                Cursor.lockState = CursorLockMode.Confined;
+            } else {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+        }
+
     }
 
     public void ChangeLock(){
@@ -42,15 +53,13 @@ public class mouseLock : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             mouseLockMode = false;
             if(mainCamera){
-                mainCamera.enabled = true;
-                playerController.canMove = true;
+                mainCamera.rotationLocked = false;
             }
         } else {
             Cursor.lockState = CursorLockMode.Confined;
             mouseLockMode = true;
             if(mainCamera){
-                mainCamera.enabled = false;
-                playerController.canMove = false;
+                mainCamera.rotationLocked = true;
             }
         }
     }
