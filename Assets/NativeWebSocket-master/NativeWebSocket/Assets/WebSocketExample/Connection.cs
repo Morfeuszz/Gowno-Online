@@ -68,6 +68,8 @@ public class Connection : MonoBehaviour
                 case "tokenSuccess":
                     connected = true;
                     break;
+                case "loadCharacter":
+                    break;
                 case "chatMessage":
                     chat.reciveChatMessage(message);
                     break;
@@ -84,7 +86,7 @@ public class Connection : MonoBehaviour
 
     }
 
-    void Update()
+    void FixedUpdate()
     {
 #if !UNITY_WEBGL || UNITY_EDITOR
         websocket.DispatchMessageQueue();

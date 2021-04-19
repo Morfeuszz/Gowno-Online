@@ -8,6 +8,9 @@ public class CreateCharacter : MonoBehaviour
     public InputField characterName;
     public DataHolder DataController;
     public TextFadeOut fadeOutScript;
+    public authClient connection;
+
+    
     void Start(){
        DataController = GameObject.Find ("DATA").GetComponent<DataHolder>();
     }

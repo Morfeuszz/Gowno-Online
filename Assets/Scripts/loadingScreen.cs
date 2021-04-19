@@ -26,7 +26,7 @@ public class loadingScreen : MonoBehaviour
     IEnumerator LoadSceneAsync ()
     {
         if(test==true){
-            AsyncOperation op = SceneManager.LoadSceneAsync("testchamber");
+            AsyncOperation op = SceneManager.LoadSceneAsync("menuNew");
             while ( !op.isDone )
         {
             float progress = Mathf.Clamp01(op.progress / .9f);

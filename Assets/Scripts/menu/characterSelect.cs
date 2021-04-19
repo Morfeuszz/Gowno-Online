@@ -27,7 +27,7 @@ public class characterSelect : MonoBehaviour
     [System.Serializable]
     public class SQLResult
     {
-    public CharacterInfo[] result;
+    public CharacterInfo[] data;
     }
     public  SQLResult charactersDB;
     public GameObject widgetObject, statusPanel, newCharacterButton, serverSelect, blackScreen; 
@@ -43,37 +43,23 @@ public class characterSelect : MonoBehaviour
         serverSelectCanvas = serverSelect.GetComponent<CanvasFadeOut>();
     }
 
+
     public void GetCharacters () {
-        Array.Clear(charactersDB.result, 0 ,charactersDB.result.Length);
+        Array.Clear(charactersDB.data, 0 ,charactersDB.data.Length);
         foreach (Transform child in statusPanel.transform)
         {
             Destroy(child.gameObject);
         }
-        string url = "http://35.158.140.147/php/getCharacters.php";
-        //string url = "http://127.0.0.1/getCharacters.php";
-
-        WWWForm form = new WWWForm();
-        form.AddField("ID", DataController.data.ID);
-        WWW www = new WWW(url, form);
-        StartCoroutine(WaitForRequest(www));
+        var mess = "{\"action\" : \"getCharacters\", \"ID\" : \"" + DataController.data.ID + "\"}";
+       auth.SendWebSocketMessage(mess);
     }
-     IEnumerator WaitForRequest(WWW www)
-     {
-         yield return www;
-         if (www.error == null)
-         {
-            string temp = fixJson(www.text);
-            Debug.Log(temp);
-            charactersDB = JsonUtility.FromJson<SQLResult>(temp);
-            loadCharacters();
-    
-         } else {
-            Debug.Log("WWW Error: "+ www.error);
-         }    
-     }    
 
-    void loadCharacters(){
-        foreach(CharacterInfo character in charactersDB.result){
+
+    public void loadCharacters(string message){
+        Debug.Log(message);
+        charactersDB = JsonUtility.FromJson<SQLResult>(message);
+
+        foreach(CharacterInfo character in charactersDB.data){
             CharacterWidget newWidget = new CharacterWidget();
             GameObject widget = Instantiate(widgetObject, statusPanel.transform);
             widget.name = character.Name +"Character";

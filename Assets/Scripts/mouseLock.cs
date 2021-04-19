@@ -32,20 +32,21 @@ public class mouseLock : MonoBehaviour
 
     void Update()
     {   
-        if(Input.GetKeyDown("left ctrl") && canChange){
-            locked = !locked;
-        }
+        if(mainCamera != null){
+            if(Input.GetKeyDown("left ctrl") && canChange){
+                locked = !locked;
+            }
 
-        if(locked != mouseLockMode){
-            mouseLockMode = locked;
-            mainCamera.rotationLocked = locked;
-            if(locked){
-                Cursor.lockState = CursorLockMode.Confined;
-            } else {
-                Cursor.lockState = CursorLockMode.Locked;
+            if(locked != mouseLockMode){
+                mouseLockMode = locked;
+                mainCamera.rotationLocked = locked;
+                if(locked){
+                    Cursor.lockState = CursorLockMode.Confined;
+                } else {
+                    Cursor.lockState = CursorLockMode.Locked;
+                }
             }
         }
-
     }
 
     public void ChangeLock(){

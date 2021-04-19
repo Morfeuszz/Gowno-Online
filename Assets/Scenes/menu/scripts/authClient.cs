@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using NativeWebSocket;
+using UnityEngine.SceneManagement;
 
 public class authClient : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class authClient : MonoBehaviour
     public login loginScript;
     public register registerScript;
     public characterSelect characterSelectScript;
+    private bool masterConnnection = false;
 
     public class Action{
         public string action;
@@ -30,11 +32,25 @@ public class authClient : MonoBehaviour
     string url = "http://35.158.140.147/server.json";
     void Awake()
     {   
+        if (GameObject.FindGameObjectsWithTag("Connection").Length >= 2 && masterConnnection == false){
+            Destroy(gameObject);
+            
+        }
+
         if (GameObject.Find("DATA") == null){
             GameObject Data = Instantiate(dataPrefab);
             Data.name = "DATA";
         }
         DataController = GameObject.Find ("DATA").GetComponent<DataHolder>();
+        DontDestroyOnLoad(this.gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode){
+        masterConnnection = true;
+        if(scene.name != "menuNew" && scene.name != "CharacterCreator" && scene.name != "LoadingScreen"){
+            Destroy(gameObject);
+        }
+
     }
     public void init(){
         loadingCanvas.FadeIn();
@@ -82,6 +98,9 @@ public class authClient : MonoBehaviour
                     break;
                 case "register":
                     registerScript.registerRespons(actionName);
+                    break;
+                case "getCharacters":
+                    characterSelectScript.loadCharacters(message);
                     break;
                 default: 
                     break;
